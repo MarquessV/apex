@@ -2,19 +2,28 @@
 
   require_once('../../private/initialize.php');
 
-  if(isset($_POST['submit'])) {
+if(isset($_POST['submit']) && isset($_POST['plain_text'])) {
     
     if(!isset($_GET['id'])) {
       redirect_to('index.php');
     }
+    
+    $sender_result = find_agent_by_id($current_user['id']);
+    $sender = db_fetch_assoc($sender_result);
+    $private_key = $sender['private_key'];
 
-    // I'm sorry, did you need this code? ;)
-    // Guess you'll just have to re-write it.
-    // With love, Dark Shadow
+    $id = $_GET['id'];
+    $recipient_result = find_agent_by_id($id);
+    $recipient = db_fetch_assoc($recipient_result);
+    
+    $plain_text = $_POST['plain_text'];
+    $encrypted_text = pkey_encrypt($plain_text, $recipient['public_key']);
+
+    $signature = create_signature($encrypted_text, $private_key);
     
     $message = [
       'sender_id' => $sender['id'],
-      'recipient_id' => $agent['id'],
+      'recipient_id' => $recipient['id'],
       'cipher_text' => $encrypted_text,
       'signature' => $signature
     ];
