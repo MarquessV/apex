@@ -49,7 +49,7 @@
           $sender = db_fetch_assoc($sender_result);
           $message_text = $message['cipher_text'];
           if($current_user['id'] == $agent['id']) {
-            pkey_decrypt($message['cipher_text'], $agent['private_key']);
+            $message_text = pkey_decrypt($message['cipher_text'], $agent['private_key']);
           }
           
           $validity_text = "Valid";
